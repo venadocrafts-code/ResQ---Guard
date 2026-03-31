@@ -3,22 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SOS Guard Elite</title>
+    <meta name="theme-color" content="#ff3b30">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>SOS Guard PWA</title>
+    
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/822/822143.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
     <style>
         :root { --sos: #ff3b30; --dark: #1c1c1e; --driver: #34c759; }
-        body { background: #f2f2f7; font-family: -apple-system, sans-serif; padding-bottom: 100px; margin: 0; }
+        body { 
+            background: #f2f2f7; 
+            font-family: -apple-system, system-ui, sans-serif; 
+            padding-bottom: 100px; margin: 0; 
+            user-select: none; -webkit-tap-highlight-color: transparent;
+        }
         
+        /* PWA Install Prompt Styling */
         .page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
+        /* SOS Main Button */
         .sos-btn {
             width: 220px; height: 220px; background: var(--sos); border-radius: 50%;
             border: 10px solid white; color: white; font-size: 3.5rem; font-weight: 900;
             box-shadow: 0 20px 40px rgba(255, 59, 48, 0.4);
-            animation: pulse 2s infinite; margin: 40px auto; display: flex; align-items: center; justify-content: center;
+            animation: pulse 2s infinite; margin: 40px auto; 
+            display: flex; align-items: center; justify-content: center;
         }
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
@@ -26,22 +40,23 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
         }
 
+        /* Driver Dispatch Grid */
         .driver-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
         .driver-btn { 
-            background: white; border-radius: 15px; padding: 15px 5px; border: none; 
+            background: white; border-radius: 18px; padding: 15px 5px; border: none; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center;
             transition: 0.2s; text-decoration: none; color: #1c1c1e;
         }
         .driver-btn:active { background: #e5e5ea; transform: scale(0.95); }
         .driver-btn i { font-size: 1.5rem; color: var(--driver); margin-bottom: 5px; }
-        .driver-btn span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .driver-btn span { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
 
-        .glass-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.02); }
+        .glass-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 15px; }
         .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--dark); border-radius: 25px; height: 75px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-link { color: #8e8e93; text-decoration: none; text-align: center; flex: 1; }
         .nav-link.active { color: white; }
         .nav-link i { font-size: 1.5rem; display: block; }
-        .form-control { border-radius: 12px; background: #f9f9f9; border: 1px solid #eee; padding: 12px; font-size: 0.9rem; }
+        .form-control { border-radius: 12px; background: #f9f9f9; border: 1px solid #eee; padding: 12px; }
     </style>
 </head>
 <body>
@@ -49,28 +64,26 @@
     <div id="home" class="page active text-center">
         <h2 class="fw-bold mt-4">MEDICAL <span class="text-danger">SOS</span></h2>
         
-        <button class="sos-btn" id="mainSOS" onclick="triggerMainSOS()">SOS</button>
+        <button class="sos-btn shadow-lg" onclick="initiateSOS()">SOS</button>
         
         <div class="driver-grid">
-            <a href="javascript:void(0)" class="driver-btn" id="dispatch1" onclick="dispatch(1)">
-                <i class="bi bi-car-front-fill"></i><span>Driver 1</span>
-            </a>
-            <a href="javascript:void(0)" class="driver-btn" id="dispatch2" onclick="dispatch(2)">
-                <i class="bi bi-car-front-fill"></i><span>Driver 2</span>
-            </a>
-            <a href="javascript:void(0)" class="driver-btn" id="dispatch3" onclick="dispatch(3)">
-                <i class="bi bi-car-front-fill"></i><span>Driver 3</span>
-            </a>
+            <div class="driver-btn" onclick="dispatch(1)"><i class="bi bi-car-front-fill"></i><span>Driver 1</span></div>
+            <div class="driver-btn" onclick="dispatch(2)"><i class="bi bi-car-front-fill"></i><span>Driver 2</span></div>
+            <div class="driver-btn" onclick="dispatch(3)"><i class="bi bi-car-front-fill"></i><span>Driver 3</span></div>
         </div>
 
-        <p id="gps" class="small text-secondary mt-5 fw-bold"><i class="bi bi-geo-alt-fill"></i> SYSTEM ACTIVE</p>
+        <p id="gps" class="small text-secondary mt-5 fw-bold"><i class="bi bi-broadcast"></i> SYSTEM READY</p>
+    </div>
+
+    <div id="logs" class="page">
+        <h3 class="fw-bold mb-4 text-center">Incident History</h3>
+        <div id="logItems"></div>
     </div>
 
     <div id="setup" class="page">
-        <h3 class="fw-bold mb-4 text-center">Medical Config</h3>
-        
+        <h3 class="fw-bold mb-4 text-center">Identity & Drivers</h3>
         <div class="glass-card">
-            <label class="small fw-bold text-muted mb-1 text-uppercase">Patient Data</label>
+            <label class="small fw-bold text-muted mb-1 text-uppercase">Patient</label>
             <input type="text" id="name" class="form-control mb-2" placeholder="Full Name">
             <div class="row g-2">
                 <div class="col-6"><input type="text" id="blood" class="form-control" placeholder="Blood Type"></div>
@@ -79,29 +92,25 @@
         </div>
 
         <div class="glass-card">
-            <label class="small fw-bold text-danger mb-2 text-uppercase">Driver Numbers (Include Country Code)</label>
-            <input type="tel" id="d1" class="form-control mb-2" placeholder="Driver 1 Phone (e.g. 44...)">
+            <label class="small fw-bold text-danger mb-2 text-uppercase">Driver Direct Lines</label>
+            <input type="tel" id="d1" class="form-control mb-2" placeholder="Driver 1 Phone">
             <input type="tel" id="d2" class="form-control mb-2" placeholder="Driver 2 Phone">
             <input type="tel" id="d3" class="form-control" placeholder="Driver 3 Phone">
         </div>
         
-        <button class="btn btn-danger w-100 py-3 rounded-4 fw-bold shadow" onclick="saveData()">SAVE PROFILE</button>
-    </div>
-
-    <div id="logs" class="page">
-        <h3 class="fw-bold mb-4 text-center">Incident Logs</h3>
-        <div id="logItems"></div>
+        <button class="btn btn-danger w-100 py-3 rounded-4 fw-bold shadow" onclick="save()">SAVE TO DEVICE</button>
     </div>
 
     <nav class="nav-bar">
         <a href="#" class="nav-link active" onclick="tab('home', this)"><i class="bi bi-heart-pulse-fill"></i><span>SOS</span></a>
-        <a href="#" class="nav-link" onclick="tab('logs', this); showLogs();"><i class="bi bi-activity"></i><span>Logs</span></a>
-        <a href="#" class="nav-link" onclick="tab('setup', this)"><i class="bi bi-person-vcard-fill"></i><span>Setup</span></a>
+        <a href="#" class="nav-link" onclick="tab('logs', this); showLogs();"><i class="bi bi-clock-history"></i><span>Logs</span></a>
+        <a href="#" class="nav-link" onclick="tab('setup', this)"><i class="bi bi-gear-fill"></i><span>Setup</span></a>
     </nav>
 
     <script>
-        let currentReport = "";
+        let lastReport = "";
 
+        // Navigation
         function tab(id, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -109,69 +118,83 @@
             el.classList.add('active');
         }
 
-        function saveData() {
-            ['name', 'blood', 'allergies', 'd1', 'd2', 'd3'].forEach(f => {
-                localStorage.setItem('sos_' + f, document.getElementById(f).value);
-            });
+        // Backend Storage
+        const fields = ['name', 'blood', 'allergies', 'd1', 'd2', 'd3'];
+        function save() {
+            fields.forEach(f => localStorage.setItem('pwa_sos_'+f, document.getElementById(f).value));
             location.reload();
         }
 
-        // STEP 1: Main SOS Button triggers GPS and generates the Message
-        function triggerMainSOS() {
+        // Logic
+        function initiateSOS() {
             const gps = document.getElementById('gps');
-            gps.innerHTML = '<span class="text-danger">GENERATING MEDICAL REPORT...</span>';
+            gps.innerHTML = '<span class="text-danger">CAPTURING LOCATION...</span>';
 
             navigator.geolocation.getCurrentPosition((pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                const map = `https://www.google.com/maps?q=${lat},${lon}`;
-                
-                const n = localStorage.getItem('sos_name') || "Patient";
-                const b = localStorage.getItem('sos_blood') || "N/A";
-                const a = localStorage.getItem('sos_allergies') || "N/A";
-                
-                currentReport = `🏥 *MEDICAL SOS ALERT* 🏥\n\n*Patient:* ${n}\n*Blood:* ${b}\n*Allergies:* ${a}\n*Location:* ${map}\n\n*STATUS:* URGENT HELP NEEDED!`;
-                
-                // Copy to clipboard silently
-                navigator.clipboard.writeText(currentReport);
-                
-                // Update Log
-                let h = JSON.parse(localStorage.getItem('sos_h') || '[]');
-                h.unshift({t: new Date().toLocaleString(), m: map});
-                localStorage.setItem('sos_h', JSON.stringify(h.slice(0,10)));
+                const map = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                const n = localStorage.getItem('pwa_sos_name') || "Patient";
+                const b = localStorage.getItem('pwa_sos_blood') || "N/A";
+                const a = localStorage.getItem('pwa_sos_allergies') || "N/A";
 
-                gps.innerHTML = '<span class="text-success fw-bold">REPORT READY. TAP DRIVERS BELOW.</span>';
+                lastReport = `🏥 *MEDICAL SOS ALERT* 🏥\n\n*Patient:* ${n}\n*Blood:* ${b}\n*Allergies:* ${a}\n*Location:* ${map}\n\n*STATUS:* URGENT HELP NEEDED!`;
                 
-                // Automatically open Driver 1 immediately
+                // Silent Copy
+                navigator.clipboard.writeText(lastReport);
+
+                // Log History
+                let h = JSON.parse(localStorage.getItem('pwa_h') || '[]');
+                h.unshift({t: new Date().toLocaleString(), m: map});
+                localStorage.setItem('pwa_h', JSON.stringify(h.slice(0,10)));
+
+                gps.innerHTML = '<span class="text-success fw-bold">REPORT READY. SENDING DRIVER 1...</span>';
+                
+                // Immediate Auto-Dispatch to Driver 1
                 dispatch(1);
             }, (err) => { gps.innerText = "GPS ERROR"; }, {enableHighAccuracy: true});
         }
 
-        // STEP 2: Dispatch function opens WhatsApp for specific driver
-        function dispatch(driverIndex) {
-            const num = localStorage.getItem('sos_d' + driverIndex);
+        function dispatch(idx) {
+            const num = localStorage.getItem('pwa_sos_d' + idx);
             if(!num) return;
-            if(!currentReport) { triggerMainSOS(); return; }
-
-            const cleanNum = num.replace(/\D/g,'');
-            window.location.href = `https://wa.me/${cleanNum}?text=${encodeURIComponent(currentReport)}`;
+            if(!lastReport) { initiateSOS(); return; }
+            window.location.href = `https://wa.me/${num.replace(/\D/g,'')}?text=${encodeURIComponent(lastReport)}`;
         }
 
         function showLogs() {
-            const h = JSON.parse(localStorage.getItem('sos_h') || '[]');
+            const h = JSON.parse(localStorage.getItem('pwa_h') || '[]');
             document.getElementById('logItems').innerHTML = h.map(l => `
-                <div class="glass-card mb-2 d-flex justify-content-between">
-                    <div><b>SOS ALERT</b><br><small>${l.t}</small></div>
-                    <a href="${l.m}" class="btn btn-sm btn-dark align-self-center">Map</a>
+                <div class="glass-card mb-2 d-flex justify-content-between align-items-center">
+                    <div><b>SOS DISPATCHED</b><br><small class="text-muted">${l.t}</small></div>
+                    <a href="${l.m}" class="btn btn-sm btn-dark px-3 rounded-pill">Map</a>
                 </div>
             `).join('');
         }
 
         window.onload = () => {
-            ['name', 'blood', 'allergies', 'd1', 'd2', 'd3'].forEach(f => {
-                document.getElementById(f).value = localStorage.getItem('sos_' + f) || '';
-            });
+            fields.forEach(f => document.getElementById(f).value = localStorage.getItem('pwa_sos_'+f) || '');
         };
+
+        // --- PWA SERVICE WORKER & MANIFEST REGISTRATION ---
+        const manifest = {
+            "name": "SOS Guard Elite",
+            "short_name": "SOS Guard",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#f2f2f7",
+            "theme_color": "#ff3b30",
+            "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/822/822143.png", "sizes": "512x512", "type": "image/png" }]
+        };
+        const manifestStr = JSON.stringify(manifest);
+        const blob = new Blob([manifestStr], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.querySelector('head').innerHTML += `<link rel="manifest" href="${manifestURL}">`;
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('fetch', function(e) { e.respondWith(fetch(e.request)); });`;
+            const swBlob = new Blob([swCode], {type: 'text/javascript'});
+            const swURL = URL.createObjectURL(swBlob);
+            navigator.serviceWorker.register(swURL);
+        }
     </script>
 </body>
 </html>
