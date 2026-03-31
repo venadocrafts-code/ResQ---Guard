@@ -3,210 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Medical SOS Elite</title>
+    <title>SOS Elite | Medical Dispatch</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <style>
-        :root { --sos-red: #ff3b30; --medical-blue: #007aff; --glass: rgba(255, 255, 255, 0.8); }
+        :root { --sos-red: #ff3b30; --med-blue: #007aff; --dark-bg: #1c1c1e; }
         
         body { 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            min-height: 100vh; margin: 0; padding-bottom: 100px; overflow-x: hidden;
+            background: #f2f2f7; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding-bottom: 100px; overflow-x: hidden;
         }
 
-        /* Animations */
-        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse-ring { 
-            0% { transform: scale(0.33); } 
-            80%, 100% { opacity: 0; } 
+        /* --- ANIMATIONS --- */
+        @keyframes heart-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 40px rgba(255, 59, 48, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
         }
-        @keyframes heart-beat {
-            0% { transform: scale(1); }
-            14% { transform: scale(1.1); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.1); }
-            70% { transform: scale(1); }
-        }
+        .page-fade { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
-        .page { display: none; padding: 25px; animation: slideIn 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+        /* --- UI COMPONENTS --- */
+        .page { display: none; padding: 25px; }
         .page.active { display: block; }
 
-        /* SOS Button Design */
-        .sos-wrapper { 
-            position: relative; width: 280px; height: 280px; margin: 40px auto; 
-            display: flex; align-items: center; justify-content: center;
-        }
-        .sos-ring {
-            position: absolute; width: 100%; height: 100%;
-            border: 2px solid var(--sos-red); border-radius: 50%;
-            animation: pulse-ring 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        .sos-container { 
+            height: 50vh; display: flex; align-items: center; justify-content: center; flex-direction: column; 
         }
         .sos-btn {
-            width: 220px; height: 220px; border-radius: 50%;
-            background: var(--sos-red); color: white; border: 8px solid white;
-            font-size: 3.5rem; font-weight: 900; z-index: 2;
-            box-shadow: 0 15px 35px rgba(255, 59, 48, 0.4);
-            transition: 0.3s; display: flex; align-items: center; justify-content: center;
-            animation: heart-beat 1.5s infinite;
+            width: 240px; height: 240px; background: var(--sos-red);
+            border-radius: 50%; border: 12px solid white; color: white;
+            font-size: 4rem; font-weight: 900;
+            box-shadow: 0 20px 40px rgba(255, 59, 48, 0.4);
+            animation: heart-pulse 2s infinite; transition: 0.2s;
         }
-        .sos-btn:active { transform: scale(0.9); animation: none; }
+        .sos-btn:active { transform: scale(0.9); }
 
-        /* Glass Cards */
         .glass-card {
-            background: var(--glass); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3); border-radius: 24px;
-            padding: 20px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-            margin-bottom: 20px;
+            background: white; border-radius: 24px; padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px;
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
-        /* Bottom Nav */
+        .input-label { font-size: 0.75rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .form-control { border-radius: 12px; padding: 12px; background: #f9f9f9; border: 1px solid #efefef; }
+
+        /* --- NAVIGATION --- */
         .nav-bar {
             position: fixed; bottom: 20px; left: 20px; right: 20px;
-            height: 70px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-            border-radius: 25px; display: flex; justify-content: space-around;
-            align-items: center; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            height: 75px; background: var(--dark-bg); border-radius: 25px;
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); z-index: 1000;
         }
-        .nav-btn { background: none; border: none; color: #777; transition: 0.3s; text-align: center; }
-        .nav-btn.active { color: #fff; transform: translateY(-5px); }
-        .nav-btn i { font-size: 1.5rem; }
-        .nav-btn span { font-size: 0.6rem; display: block; font-weight: bold; text-transform: uppercase; margin-top: 2px; }
-
-        .form-control { 
-            border-radius: 12px; border: 1px solid #eee; padding: 12px; 
-            background: rgba(255,255,255,0.5); 
-        }
+        .nav-link { color: #8e8e93; text-decoration: none; text-align: center; flex: 1; transition: 0.3s; }
+        .nav-link.active { color: white; transform: translateY(-5px); }
+        .nav-link i { font-size: 1.6rem; display: block; }
+        .nav-link span { font-size: 0.65rem; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <div id="home" class="page active">
-        <div class="text-center mb-4">
-            <h1 class="fw-bold text-dark mb-0">ELITE <span class="text-danger">GUARD</span></h1>
-            <div id="userTag" class="badge bg-white text-dark shadow-sm py-2 px-3 rounded-pill mt-2 opacity-75">
-                <i class="bi bi-person-circle me-1 text-danger"></i> READY
-            </div>
+    <div id="home" class="page active page-fade">
+        <div class="text-center mt-3">
+            <h2 class="fw-bold m-0">MEDICAL <span class="text-danger">GUARD</span></h2>
+            <div id="userLabel" class="badge bg-white text-dark shadow-sm rounded-pill py-2 px-3 mt-2 small">SYSTEM READY</div>
         </div>
 
-        <div class="sos-wrapper">
-            <div class="sos-ring"></div>
-            <div class="sos-ring" style="animation-delay: 0.5s"></div>
-            <button class="sos-btn" onclick="triggerSOS()">SOS</button>
+        <div class="sos-container">
+            <button class="sos-btn" onclick="executeSOS()">SOS</button>
+            <p id="gpsLabel" class="mt-4 small fw-bold text-secondary">GPS STANDBY</p>
         </div>
 
         <div class="text-center">
-            <button class="btn btn-dark rounded-pill px-5 py-2 fw-bold shadow-lg" onclick="sendSafe()">
-                <i class="bi bi-shield-check text-success me-2"></i>I AM STABLE
+            <button class="btn btn-dark rounded-pill px-5 py-2 fw-bold shadow" onclick="executeSafe()">
+                <i class="bi bi-shield-check text-success me-2"></i>I AM SAFE
             </button>
-            <p id="gps-status" class="mt-4 small fw-bold text-secondary"><i class="bi bi-broadcast"></i> SATELLITE STANDBY</p>
         </div>
     </div>
 
-    <div id="logs" class="page">
-        <h2 class="fw-bold mb-4">Alert History</h2>
-        <div id="log-container"></div>
+    <div id="logs" class="page page-fade">
+        <h2 class="fw-bold mb-4">Event Logs</h2>
+        <div id="historyList"></div>
     </div>
 
-    <div id="setup" class="page">
-        <h2 class="fw-bold mb-4">Secure Setup</h2>
+    <div id="setup" class="page page-fade">
+        <h2 class="fw-bold mb-4 text-center">Medical Profile</h2>
+        
         <div class="glass-card">
-            <label class="small fw-bold text-muted mb-2">PERSONAL IDENTITY</label>
-            <input type="text" id="inName" class="form-control mb-3" placeholder="Patient Full Name">
-            <input type="tel" id="inPhone" class="form-control mb-3" placeholder="Emergency Contact Number">
-            
-            <label class="small fw-bold text-muted mb-2">WHATSAPP GROUP LINK</label>
-            <input type="text" id="inGroup" class="form-control mb-2" placeholder="https://chat.whatsapp.com/...">
-            <div class="alert alert-info py-2" style="font-size: 0.7rem;">
-                <i class="bi bi-info-circle"></i> Paste the <b>Invite Link</b> from your WhatsApp Group info.
+            <span class="input-label">Identity</span>
+            <input type="text" id="name" class="form-control mb-3" placeholder="Full Name">
+            <input type="tel" id="phone" class="form-control mb-3" placeholder="Phone Number">
+            <span class="input-label">WhatsApp Group Link</span>
+            <input type="text" id="group" class="form-control" placeholder="https://chat.whatsapp.com/...">
+        </div>
+
+        <div class="glass-card">
+            <span class="input-label">Emergency Health Data</span>
+            <div class="row g-2">
+                <div class="col-6">
+                    <select id="blood" class="form-control">
+                        <option value="Not Set">Blood Type</option>
+                        <option value="A+">A+</option><option value="A-">A-</option>
+                        <option value="B+">B+</option><option value="B-">B-</option>
+                        <option value="O+">O+</option><option value="O-">O-</option>
+                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <input type="text" id="allergies" class="form-control" placeholder="Allergies">
+                </div>
             </div>
         </div>
-        <button class="btn btn-danger w-100 py-3 rounded-4 fw-bold shadow-lg" onclick="saveSettings()">ACTIVATE SYSTEM</button>
+
+        <button class="btn btn-danger w-100 py-3 rounded-4 fw-bold shadow-lg" onclick="saveProfile()">ACTIVATE PROTECTION</button>
+        <p class="text-muted small text-center mt-3">Note: Group links block auto-text. This app will copy your message; you just need to <b>Paste</b> it in the group.</p>
     </div>
 
     <nav class="nav-bar">
-        <button class="nav-btn active" onclick="showTab('home', this)"><i class="bi bi-heart-pulse"></i><span>Emergency</span></button>
-        <button class="nav-btn" onclick="showTab('logs', this); renderLogs();"><i class="bi bi-journal-text"></i><span>History</span></button>
-        <button class="nav-btn" onclick="showTab('setup', this)"><i class="bi bi-person-gear"></i><span>Identity</span></button>
+        <a href="#" class="nav-link active" onclick="navigate('home', this)"><i class="bi bi-heart-pulse-fill"></i><span>SOS</span></a>
+        <a href="#" class="nav-link" onclick="navigate('logs', this); renderLogs();"><i class="bi bi-clock-history"></i><span>Logs</span></a>
+        <a href="#" class="nav-link" onclick="navigate('setup', this)"><i class="bi bi-person-badge-fill"></i><span>Profile</span></a>
     </nav>
 
     <script>
-        function showTab(id, btn) {
+        // Navigation Logic
+        function navigate(id, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+            window.scrollTo(0,0);
         }
 
-        function saveSettings() {
-            localStorage.setItem('sos_name', document.getElementById('inName').value);
-            localStorage.setItem('sos_phone', document.getElementById('inPhone').value);
-            localStorage.setItem('sos_group', document.getElementById('inGroup').value);
-            alert("Security Protocols Activated!");
+        // Save Data
+        const dataKeys = ['name', 'phone', 'group', 'blood', 'allergies'];
+        function saveProfile() {
+            dataKeys.forEach(k => localStorage.setItem('med_sos_' + k, document.getElementById(k).value));
+            alert("Medical Profile Secured!");
             location.reload();
         }
 
-        function triggerSOS() {
-            const name = localStorage.getItem('sos_name') || "Unknown";
-            const phone = localStorage.getItem('sos_phone') || "N/A";
-            const groupLink = localStorage.getItem('sos_group');
-            const status = document.getElementById('gps-status');
+        // SOS EXECUTION
+        async function executeSOS() {
+            const name = localStorage.getItem('med_sos_name') || "Patient";
+            const phone = localStorage.getItem('med_sos_phone') || "N/A";
+            const blood = localStorage.getItem('med_sos_blood') || "Not Set";
+            const allergies = localStorage.getItem('med_sos_allergies') || "None listed";
+            const group = localStorage.getItem('med_sos_group');
+            const gpsLabel = document.getElementById('gpsLabel');
 
-            if(!groupLink) return showTab('setup', document.querySelectorAll('.nav-btn')[2]);
+            if (!group) {
+                alert("Please add your WhatsApp Group Link in Setup!");
+                return navigate('setup', document.querySelectorAll('.nav-link')[2]);
+            }
 
-            status.innerHTML = '<span class="spinner-border spinner-border-sm"></span> SECURING GPS COORDINATES...';
+            gpsLabel.innerHTML = '<span class="spinner-border spinner-border-sm text-danger"></span> TRACKING SATELLITES...';
 
-            navigator.geolocation.getCurrentPosition((pos) => {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
-                const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+                const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
                 
-                // History Update
-                let h = JSON.parse(localStorage.getItem('sos_history') || '[]');
-                h.unshift({time: new Date().toLocaleString(), map: mapLink});
-                localStorage.setItem('sos_history', JSON.stringify(h.slice(0,10)));
+                // Construct the Message
+                const report = `🏥 *MEDICAL EMERGENCY REPORT* 🏥\n\n*PATIENT:* ${name}\n*PHONE:* ${phone}\n*LOCATION:* ${mapUrl}\n\n*BLOOD TYPE:* ${blood}\n*ALLERGIES:* ${allergies}\n\n*STATUS:* Immediate assistance required!`;
 
-                // THE MESSAGE (Clean & Professional)
-                const text = `🏥 *MEDICAL EMERGENCY REPORT* 🏥\n\n*PATIENT:* ${name}\n*PHONE:* ${phone}\n*LOCATION:* ${mapLink}\n\n*STATUS:* Immediate medical assistance required!`;
-                
-                // FIX: If the group link fails, this uses the API method to send message
-                // We use the wa.me protocol as a bridge
-                const encodedMsg = encodeURIComponent(text);
-                
-                // If the user provided a full link, we try to force the text
-                const finalUrl = `${groupLink}?text=${encodedMsg}`;
-                
-                window.location.href = finalUrl;
-            }, (err) => alert("GPS Failed! Enable location."), {enableHighAccuracy: true});
+                // 1. Copy to clipboard (Crucial for Groups)
+                try {
+                    await navigator.clipboard.writeText(report);
+                    alert("✅ SOS REPORT COPIED!\n\nOpening Group... Now PASTE the message in the chat box.");
+                } catch (e) {
+                    console.log("Clipboard error");
+                }
+
+                // 2. Save to History
+                let logs = JSON.parse(localStorage.getItem('sos_history') || '[]');
+                logs.unshift({ time: new Date().toLocaleString(), map: mapUrl });
+                localStorage.setItem('sos_history', JSON.stringify(logs.slice(0, 10)));
+
+                // 3. Open WhatsApp Group
+                window.location.href = group;
+
+            }, (err) => {
+                alert("GPS Error: Please enable location services.");
+                gpsLabel.innerText = "GPS FAILED";
+            }, { enableHighAccuracy: true });
         }
 
-        function sendSafe() {
-            const link = localStorage.getItem('sos_group');
-            if(!link) return;
-            const text = encodeURIComponent(`✅ *STABLE STATUS UPDATE*\nPatient Name: ${localStorage.getItem('sos_name')}\nI am now safe and stable. No further help needed.`);
-            window.location.href = `${link}?text=${text}`;
+        function executeSafe() {
+            const group = localStorage.getItem('med_sos_group');
+            if(group) {
+                navigator.clipboard.writeText("✅ *STABLE REPORT*\nPatient is now safe. Situation resolved.");
+                alert("Safe message copied! Opening group...");
+                window.location.href = group;
+            }
         }
 
         function renderLogs() {
-            const container = document.getElementById('log-container');
-            const logs = JSON.parse(localStorage.getItem('sos_history') || '[]');
-            if(!logs.length) { container.innerHTML = '<p class="text-center opacity-50 mt-5">No Security Logs.</p>'; return; }
-            container.innerHTML = logs.map(l => `
+            const list = document.getElementById('historyList');
+            const h = JSON.parse(localStorage.getItem('sos_history') || '[]');
+            if(!h.length) { 
+                list.innerHTML = '<div class="text-center opacity-25 mt-5"><i class="bi bi-clipboard2-pulse fs-1"></i><p>No activity logs</p></div>'; 
+                return; 
+            }
+            list.innerHTML = h.map(l => `
                 <div class="glass-card mb-2">
-                    <div class="d-flex justify-content-between">
-                        <span class="text-danger fw-bold small">MEDICAL SOS SENT</span>
-                        <span class="text-muted small">${l.time}</span>
+                    <div class="d-flex justify-content-between small fw-bold text-danger mb-2">
+                        <span>EMERGENCY SOS</span><span>${l.time}</span>
                     </div>
-                    <a href="${l.map}" target="_blank" class="btn btn-sm btn-outline-dark w-100 mt-2">Open Location Map</a>
+                    <a href="${l.map}" target="_blank" class="btn btn-sm btn-outline-dark w-100 rounded-pill">View Coordinates</a>
                 </div>
             `).join('');
         }
 
         window.onload = () => {
-            document.getElementById('inName').value = localStorage.getItem('sos_name') || '';
-            document.getElementById('inPhone').value = localStorage.getItem('sos_phone') || '';
-            document.getElementById('inGroup').value = localStorage.getItem('sos_group') || '';
-            if(localStorage.getItem('sos_name')) document.getElementById('userTag').innerText = "PROTECTING: " + localStorage.getItem('sos_name');
+            dataKeys.forEach(k => {
+                const val = localStorage.getItem('med_sos_' + k);
+                if(val) document.getElementById(k).value = val;
+            });
+            const savedName = localStorage.getItem('med_sos_name');
+            if(savedName) document.getElementById('userLabel').innerText = "PROTECTING: " + savedName.toUpperCase();
         };
     </script>
 </body>
