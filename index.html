@@ -7,18 +7,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        :root { --sos: #ff3b30; --dark: #1c1c1e; --med: #007aff; }
-        body { background: #f2f2f7; font-family: -apple-system, sans-serif; padding-bottom: 100px; }
+        :root { --sos: #ff3b30; --dark: #1c1c1e; --driver: #34c759; }
+        body { background: #f2f2f7; font-family: -apple-system, sans-serif; padding-bottom: 100px; margin: 0; }
         
-        .page { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         .sos-btn {
             width: 220px; height: 220px; background: var(--sos); border-radius: 50%;
             border: 10px solid white; color: white; font-size: 3.5rem; font-weight: 900;
             box-shadow: 0 20px 40px rgba(255, 59, 48, 0.4);
-            animation: pulse 2s infinite; margin: 40px auto; display: block;
+            animation: pulse 2s infinite; margin: 40px auto; display: flex; align-items: center; justify-content: center;
         }
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
@@ -26,36 +26,51 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
         }
 
+        .driver-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .driver-btn { 
+            background: white; border-radius: 15px; padding: 15px 5px; border: none; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center;
+            transition: 0.2s; text-decoration: none; color: #1c1c1e;
+        }
+        .driver-btn:active { background: #e5e5ea; transform: scale(0.95); }
+        .driver-btn i { font-size: 1.5rem; color: var(--driver); margin-bottom: 5px; }
+        .driver-btn span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+
         .glass-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.02); }
         .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--dark); border-radius: 25px; height: 75px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-link { color: #8e8e93; text-decoration: none; text-align: center; flex: 1; }
         .nav-link.active { color: white; }
         .nav-link i { font-size: 1.5rem; display: block; }
         .form-control { border-radius: 12px; background: #f9f9f9; border: 1px solid #eee; padding: 12px; font-size: 0.9rem; }
-        .driver-badge { background: #eef2ff; color: var(--med); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; margin-bottom: 10px; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div id="home" class="page active text-center">
         <h2 class="fw-bold mt-4">MEDICAL <span class="text-danger">SOS</span></h2>
-        <div id="statusHeader" class="small text-muted fw-bold mb-2">3 DRIVERS CONNECTED</div>
         
-        <button class="sos-btn" onclick="triggerTripleSOS()">SOS</button>
+        <button class="sos-btn" id="mainSOS" onclick="triggerMainSOS()">SOS</button>
         
-        <div class="d-grid gap-2 px-4">
-            <button class="btn btn-dark rounded-pill py-3 fw-bold shadow" onclick="sendSafeToAll()">
-                <i class="bi bi-shield-check text-success me-2"></i>I AM NOW SAFE
-            </button>
+        <div class="driver-grid">
+            <a href="javascript:void(0)" class="driver-btn" id="dispatch1" onclick="dispatch(1)">
+                <i class="bi bi-car-front-fill"></i><span>Driver 1</span>
+            </a>
+            <a href="javascript:void(0)" class="driver-btn" id="dispatch2" onclick="dispatch(2)">
+                <i class="bi bi-car-front-fill"></i><span>Driver 2</span>
+            </a>
+            <a href="javascript:void(0)" class="driver-btn" id="dispatch3" onclick="dispatch(3)">
+                <i class="bi bi-car-front-fill"></i><span>Driver 3</span>
+            </a>
         </div>
-        <p id="gps" class="small text-secondary mt-4 fw-bold"><i class="bi bi-geo-alt-fill"></i> GPS STANDBY</p>
+
+        <p id="gps" class="small text-secondary mt-5 fw-bold"><i class="bi bi-geo-alt-fill"></i> SYSTEM ACTIVE</p>
     </div>
 
     <div id="setup" class="page">
         <h3 class="fw-bold mb-4 text-center">Medical Config</h3>
         
         <div class="glass-card">
-            <label class="small fw-bold text-muted mb-1">PATIENT INFO</label>
+            <label class="small fw-bold text-muted mb-1 text-uppercase">Patient Data</label>
             <input type="text" id="name" class="form-control mb-2" placeholder="Full Name">
             <div class="row g-2">
                 <div class="col-6"><input type="text" id="blood" class="form-control" placeholder="Blood Type"></div>
@@ -64,36 +79,29 @@
         </div>
 
         <div class="glass-card">
-            <label class="small fw-bold text-danger mb-2 text-uppercase">Driver Dispatch Contacts</label>
-            <div class="mb-3">
-                <span class="driver-badge">DRIVER 1 (Primary)</span>
-                <input type="tel" id="d1" class="form-control" placeholder="Phone with Country Code (e.g. 44...)">
-            </div>
-            <div class="mb-3">
-                <span class="driver-badge">DRIVER 2</span>
-                <input type="tel" id="d2" class="form-control" placeholder="Phone with Country Code">
-            </div>
-            <div class="mb-0">
-                <span class="driver-badge">DRIVER 3</span>
-                <input type="tel" id="d3" class="form-control" placeholder="Phone with Country Code">
-            </div>
+            <label class="small fw-bold text-danger mb-2 text-uppercase">Driver Numbers (Include Country Code)</label>
+            <input type="tel" id="d1" class="form-control mb-2" placeholder="Driver 1 Phone (e.g. 44...)">
+            <input type="tel" id="d2" class="form-control mb-2" placeholder="Driver 2 Phone">
+            <input type="tel" id="d3" class="form-control" placeholder="Driver 3 Phone">
         </div>
         
-        <button class="btn btn-danger w-100 py-3 rounded-4 fw-bold shadow" onclick="saveAll()">ACTIVATE ALL DRIVERS</button>
+        <button class="btn btn-danger w-100 py-3 rounded-4 fw-bold shadow" onclick="saveData()">SAVE PROFILE</button>
     </div>
 
     <div id="logs" class="page">
-        <h3 class="fw-bold mb-4 text-center">Emergency Logs</h3>
+        <h3 class="fw-bold mb-4 text-center">Incident Logs</h3>
         <div id="logItems"></div>
     </div>
 
     <nav class="nav-bar">
         <a href="#" class="nav-link active" onclick="tab('home', this)"><i class="bi bi-heart-pulse-fill"></i><span>SOS</span></a>
-        <a href="#" class="nav-link" onclick="tab('logs', this); renderLogs();"><i class="bi bi-activity"></i><span>Logs</span></a>
+        <a href="#" class="nav-link" onclick="tab('logs', this); showLogs();"><i class="bi bi-activity"></i><span>Logs</span></a>
         <a href="#" class="nav-link" onclick="tab('setup', this)"><i class="bi bi-person-vcard-fill"></i><span>Setup</span></a>
     </nav>
 
     <script>
+        let currentReport = "";
+
         function tab(id, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -101,73 +109,68 @@
             el.classList.add('active');
         }
 
-        const fields = ['name', 'blood', 'allergies', 'd1', 'd2', 'd3'];
-
-        function saveAll() {
-            fields.forEach(f => localStorage.setItem('med_' + f, document.getElementById(f).value));
-            alert("Driver Network & Medical Data Saved!");
+        function saveData() {
+            ['name', 'blood', 'allergies', 'd1', 'd2', 'd3'].forEach(f => {
+                localStorage.setItem('sos_' + f, document.getElementById(f).value);
+            });
             location.reload();
         }
 
-        async function triggerTripleSOS() {
-            const n = localStorage.getItem('med_name') || "Patient";
-            const b = localStorage.getItem('med_blood') || "N/A";
-            const a = localStorage.getItem('med_allergies') || "N/A";
-            const d1 = localStorage.getItem('med_d1');
-            const d2 = localStorage.getItem('med_d2');
-            const d3 = localStorage.getItem('med_d3');
+        // STEP 1: Main SOS Button triggers GPS and generates the Message
+        function triggerMainSOS() {
+            const gps = document.getElementById('gps');
+            gps.innerHTML = '<span class="text-danger">GENERATING MEDICAL REPORT...</span>';
 
-            if(!d1) { 
-                alert("Please setup at least Driver 1!"); 
-                return tab('setup', document.querySelectorAll('.nav-link')[2]); 
-            }
-
-            document.getElementById('gps').innerHTML = '<span class="spinner-border spinner-border-sm"></span> LOCATING PATIENT...';
-
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const map = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                const msg = `🏥 *MEDICAL SOS ALERT* 🏥\n\n*Patient:* ${n}\n*Blood:* ${b}\n*Allergies:* ${a}\n*Location:* ${map}\n\n*STATUS:* URGENT HELP NEEDED!`;
-
-                // Backup Copy
-                try { await navigator.clipboard.writeText(msg); } catch(e) {}
-
-                // Save to history
-                let h = JSON.parse(localStorage.getItem('h_logs') || '[]');
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const map = `https://www.google.com/maps?q=${lat},${lon}`;
+                
+                const n = localStorage.getItem('sos_name') || "Patient";
+                const b = localStorage.getItem('sos_blood') || "N/A";
+                const a = localStorage.getItem('sos_allergies') || "N/A";
+                
+                currentReport = `🏥 *MEDICAL SOS ALERT* 🏥\n\n*Patient:* ${n}\n*Blood:* ${b}\n*Allergies:* ${a}\n*Location:* ${map}\n\n*STATUS:* URGENT HELP NEEDED!`;
+                
+                // Copy to clipboard silently
+                navigator.clipboard.writeText(currentReport);
+                
+                // Update Log
+                let h = JSON.parse(localStorage.getItem('sos_h') || '[]');
                 h.unshift({t: new Date().toLocaleString(), m: map});
-                localStorage.setItem('h_logs', JSON.stringify(h.slice(0,10)));
+                localStorage.setItem('sos_h', JSON.stringify(h.slice(0,10)));
 
-                // Alert Driver 1 (Primary)
-                const target = d1.replace(/\D/g,'');
-                alert("Alerting Driver 1...");
-                window.location.href = `https://wa.me/${target}?text=${encodeURIComponent(msg)}`;
-
-            }, (err) => alert("GPS Error: Please enable location."), {enableHighAccuracy: true});
+                gps.innerHTML = '<span class="text-success fw-bold">REPORT READY. TAP DRIVERS BELOW.</span>';
+                
+                // Automatically open Driver 1 immediately
+                dispatch(1);
+            }, (err) => { gps.innerText = "GPS ERROR"; }, {enableHighAccuracy: true});
         }
 
-        function sendSafeToAll() {
-            const d1 = localStorage.getItem('med_d1');
-            if(!d1) return;
-            const msg = `✅ *STATUS UPDATE: SAFE*\nPatient ${localStorage.getItem('med_name')} is now stable. No further help required.`;
-            window.location.href = `https://wa.me/${d1.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`;
+        // STEP 2: Dispatch function opens WhatsApp for specific driver
+        function dispatch(driverIndex) {
+            const num = localStorage.getItem('sos_d' + driverIndex);
+            if(!num) return;
+            if(!currentReport) { triggerMainSOS(); return; }
+
+            const cleanNum = num.replace(/\D/g,'');
+            window.location.href = `https://wa.me/${cleanNum}?text=${encodeURIComponent(currentReport)}`;
         }
 
-        function renderLogs() {
-            const list = document.getElementById('logItems');
-            const h = JSON.parse(localStorage.getItem('h_logs') || '[]');
-            if(!h.length) { list.innerHTML = '<p class="text-center mt-5 opacity-50">No recent alerts.</p>'; return; }
-            list.innerHTML = h.map(l => `
-                <div class="glass-card mb-2 d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small fw-bold text-danger">SOS DISPATCHED</div>
-                        <div class="x-small text-muted" style="font-size:0.7rem">${l.t}</div>
-                    </div>
-                    <a href="${l.m}" class="btn btn-sm btn-dark rounded-pill px-3">Map</a>
+        function showLogs() {
+            const h = JSON.parse(localStorage.getItem('sos_h') || '[]');
+            document.getElementById('logItems').innerHTML = h.map(l => `
+                <div class="glass-card mb-2 d-flex justify-content-between">
+                    <div><b>SOS ALERT</b><br><small>${l.t}</small></div>
+                    <a href="${l.m}" class="btn btn-sm btn-dark align-self-center">Map</a>
                 </div>
             `).join('');
         }
 
         window.onload = () => {
-            fields.forEach(f => document.getElementById(f).value = localStorage.getItem('med_' + f) || '');
+            ['name', 'blood', 'allergies', 'd1', 'd2', 'd3'].forEach(f => {
+                document.getElementById(f).value = localStorage.getItem('sos_' + f) || '';
+            });
         };
     </script>
 </body>
