@@ -1,6 +1,6 @@
 {
   "name": "ResQ Guard",
-  "short_name": "SOS",
+  "short_name": "ResQ-Guard",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#dc3545",
